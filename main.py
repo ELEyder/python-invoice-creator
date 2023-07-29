@@ -74,7 +74,7 @@ def guardar():
     archivo.write(principal+"\n")
     archivo.close()
     # Abrir Segundo archivo
-    ruta = "datos/FACTURADET.txt"
+    ruta = "datos/detalles.txt"
     archivo = open(ruta,"a")
     for child in tv.get_children():
         # Extraer arreglo
@@ -88,7 +88,7 @@ posicion = 0
 def agregar():
     global posicion
     importe = 0
-    importe = varCantidad.get() * varPrecioUni.get()
+    importe = round((varCantidad.get() * varPrecioUni.get()), 3)
     tv.insert(parent='', index=posicion, iid=posicion, text='', values=(varCantidad.get(), varArticulo.get(),varPrecioUni.get(),importe))
     posicion=posicion+1
     print("Precio Agregado.")
