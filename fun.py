@@ -1,11 +1,12 @@
 from datetime import *
+from tkinter import *
 # ----------------------------------------------------------- Funciones -------------------------------------------------------------
 # Refrescar el tiempo que aparece en la pantalla actualizando la variable varHora
 
 
 # Leer para colocar automaticamente el numero de la boleta
-def leerFactura(varNumeroFac):
-    # Ruta de ek numero de boleta que sigue
+def leerFactura(varNumeroFac, a):
+    # Ruta de el numero de boleta que sigue
     ruta = "datos/num.txt"
     # Abrir archivo
     archivoNum = open(ruta,"r")
@@ -14,12 +15,22 @@ def leerFactura(varNumeroFac):
     if index == "":
         archivoNum.close()
         archivoNum = open(ruta,"w")
-        archivoNum.write("0")
-        index = 0
+        archivoNum.write("1")
+        index = 1
         archivoNum.close()
         archivoNum = open(ruta,"r")
-    # Guardar el numero + 1
-    nuevoNum = (int(index) + 1)
+    # Guardar el numero
+    try:
+        nuevoNum = (int(index) + a)
+    except Exception:
+        archivoNum.close()
+        archivoNum = open(ruta,"w")
+        archivoNum.write("1")
+        index = 1
+        archivoNum.close()
+        archivoNum = open(ruta,"r")
+        nuevoNum = (int(index) + a)
+
     # Cerrar archivo
     archivoNum.close()
     # Escribir en el archivo donde exraimos el num
@@ -40,7 +51,7 @@ def leerFactura(varNumeroFac):
     print("Factura Leída")
 
 # Calcular los datos extraidos de la lista de tkinter
-def calcular():
+def calcular(tv, varSubTotal, varIgv, varTotal):
     subTotal = 0.0
     for child in tv.get_children():
         # Convertir el hijo de la tv a una lista
@@ -57,9 +68,9 @@ def calcular():
     varTotal.set(round((subTotal + igv),3))
     print("Subtotal, IGV y Total calculado.")
 # Comprobar los datos antes de guardar los datos
-def comprobar():
+def comprobar(ventana, tv, varNumeroFac, varFacSerie, varRuc, varEmpresa, varSubTotal, varIgv, varTotal):
     if varRuc.get() != "" and varEmpresa.get() != "" and varFacSerie.get() != "" and varNumeroFac.get() != "":
-        guardar()
+        guardar(tv, varNumeroFac, varFacSerie, varRuc, varEmpresa, varSubTotal, varIgv, varTotal)
     else:
         # ---------------------------------------------------- Inicio de Ventana Emergente -------------------------------------------------------
         ventana_top = Toplevel(ventana)
@@ -76,7 +87,7 @@ def comprobar():
         ventana_top.focus()
         ventana_top.grab_set()
 # Guardar los datos en el archivo txt
-def guardar():
+def guardar(tv, varNumeroFac, varFacSerie, varRuc, varEmpresa, varSubTotal, varIgv, varTotal):
     #Excribir Ruta
     ruta = "datos/principal.txt"
     # Abrir archivo
@@ -96,12 +107,12 @@ def guardar():
         lista = tv.item(child,'values')
         detalles = varNumeroFac.get() + sep + varFacSerie.get() + sep + lista[1] + sep + lista[0] + sep + lista[2] + sep + lista[3]
         archivo.write(detalles+"\n")
-    leerFactura()
+    leerFactura(varNumeroFac, 1)
     print("Factura Guardada")
 
 posicion = 0
 # Agregar un precio escrito 
-def agregar():
+def agregar(tv, varCantidad, varPrecioUni, varArticulo):
     global posicion
     importe = 0
     importe = round((varCantidad.get() * varPrecioUni.get()), 3)
